@@ -1,0 +1,36 @@
+Parts List:
+
+
+
+Microcontroller
+	Arduino uno or nano (uno r3 should be enough) ~10-30$
+	https://www.amazon.com/ELEGOO-Board-ATmega328P-ATMEGA16U2-Compliant/dp/B01EWOE0UU?crid=	3AKO79C565HFD&dib=eyJ2IjoiMSJ9.GATKPetBfUe5w5-6k_zSKNoYqH69SjpPiXEyGgDAetYcJ5VwjOWbJ7InSxeX25zyMVI02QI59dRn6m6mQKrbn85yfwshSn1eKZLACEYpinhUE11aEAsVcmVOI2EPMkFm9HK_-	p5yFymPx9IxJ7PVp6xb5Bi4KK8wadE2GbOT2tCzZ4AsztC2J_88ibg038U9k0MT9Z1upBSsFJu5fa_uQUGy35ukwlpy-Xhu6AxAv-	I.UrN9w6VtjFuFFnHZLxxxy6Ov6xJ33CfUtc75nhmQgcg&dib_tag=se&keywords=arduino&qid=1766446752&sprefix=arduino%2Caps%2C165&sr=8-8
+
+
+
+
+Motor Driver
+	A Motor Driver hat for the microcontroller ~10-30$
+	https://www.amazon.com/Arduino-A000079-Motor-Shield-12V/dp/B0084ZQF3O?crid=22YGPYRXHMNLB&dib=eyJ2IjoiMSJ9.zkswl1P37Tst2-VbPWzIWA8-	JqWXz6MgdcDhiQ7zadnF9r0WczR42bK50os_qX2dQ6MSfxdxJfsux4jv_tdNIYHqkOVzqbJuJRZMB7PCd1aVO2w4yieNoFCPDP1LppmvwFw52celtZdmfJQ-	RxtMEaMXqT4HwwZZIRZ_jpuY2UHs2u7BshHW0yzOn43UP6Byu6lwPz3w8T5ZgJH3nVjA8LOKQWJfxSkWdddU2TQkdkw.OzpdtHb9JHDJJQoxZDW4EqvSgVhCkxwY_cvzsXMwvdU&dib_tag=se&keywords=arduino+mo	tor+shield&qid=1766446602&sprefix=arduino+motor+shiel%2Caps%2C135&sr=8-3
+
+
+
+
+
+IMU (part that detects orientation, has a accelerometer and gyroscope in it) 10$
+	https://www.amazon.com/HiLetgo-MPU-6050-Accelerometer-Gyroscope-Converter/dp/B00LP25V1A?	crid=MZHT63AJHCFG&dib=eyJ2IjoiMSJ9.gLqgNxxUXqXU8geQMLFIP_ZGfjhMcOTPECWzjnr9LCc-BzbqT5XdgUdTT_y9-fDXLJxiIYfEDf1iKZz82crgYzYrMRNk0Tg0l-DiQS6V-	X7XrCaIs974KG2CwQba0AVL4RtpnMnCh4TTKZYBu9QXBqwneBhE1TEuM5uWA4e_iRSJldMczyG8UVSxD-UN_lYm1pl9W7pRZYcWfpDcRTD2M5NXoqbKz85fbW1xCp6RjSE.qe2XfnW7PggZ8KB3M45nXQLlyu-	pFsdY7WD9GjES0R0&dib_tag=se&keywords=IMU+arduino&qid=1766446639&sprefix=imu+arduino%2Caps%2C128&sr=8-3
+
+
+
+
+Motors 8$
+	There are motor wheel kits that have optical sensors in them for accurate distance measurement
+	https://www.dfrobot.com/product-1458.html
+
+
+
+
+
+Battery Holder Series (maximum of 8 AA or AAA batteries) 7$
+	https://www.amazon.com/Thicken-Battery-Holder-Standard-Connector/dp/B07WP1CYYW?crid=ZFA9KHJKGRP9	&dib=eyJ2IjoiMSJ9.OSReOKXuydejqSKfxAWiLhW_h-3LJ9UYigPwLsGacJ3QZcXnPMzPlVBPWua_DzkrDkblzzJtUP5Wk5PQP_	3KwcUMgF6Npodzdlo8MtNT2nvVrfDNWHMvpL5jImDagHmyDxZ7ZAnYsbqG4xp7uDZM2LAH5X5qbEikzz46zpKtzZ6YcuVZ1scZ4IoUJgWCFnufZuspZgSGkj7dHkk1dhF8et6Ld0NCdmGagaX7snVkKZA.xKjtYdzJpxB6	GRHhTg-B7TCGdXpbDn7QcLgzROIhdU8&dib_tag=se&keywords=8AA+batteries+holder+series&qid=1766446901&sprefix=8aa+batteries+holder+series%2Caps%2C146&sr=8-3
+
