@@ -8,12 +8,13 @@ const int dirLeft = 12;
 const int pwmLeft = 3;
 
 
-const int buttonPin = A0; // A0 is safe and far away from motor logic
+const int buttonPin = 0; // A0 is safe and far away from motor logic
 
 
 
 //adjust for calibration
-const float DISTANCE_CALIBRATION = 0.715819;
+//1.3189306
+const float DISTANCE_CALIBRATION = 1.37;
 const float SENSOR_SCALE = 1.33; 
 
 
@@ -45,8 +46,7 @@ void setup() {
   pinMode(buttonPin, INPUT_PULLUP); 
 
 
-  mpu6050.calcGyroOffsets(true);
-
+  
 
   
  
@@ -54,13 +54,13 @@ void setup() {
   
 
 
-
-  driveDistance(1.0, 150);
-  delay(500);
+//2.54
+  //driveDistance(1, 150);
+  //delay(500);
 
   //driveDistance funct seems to tilt at like 1 Degree so I added 1 to the 90 degree turn
-  turnDegrees(91);
-  delay(500);
+  //turnDegrees(92.1);
+  //delay(500);
   
 
 
@@ -68,8 +68,25 @@ void setup() {
 }
 
 void loop() {
+  
   mpu6050.update();
 
+  if (digitalRead(buttonPin) == LOW) {
+
+    delay(1000);
+
+    mpu6050.calcGyroOffsets(true);
+
+    
+
+    driveDistance(1, 150);
+    delay(500);
+
+    //driveDistance funct seems to tilt at like 1 Degree so I added 1 to the 90 degree turn
+    //turnDegrees(92.1);
+    delay(500);
+  
+  } 
 
 
 
@@ -105,19 +122,21 @@ void driveDistance(float meters, int speed) {
   float circumferenceM = (WHEEL_DIAM_MM * 3.14159) / 1000.0;
   float metersPerSecond = ((speed / 255.0) * 135.0 / 60.0) * circumferenceM;
   unsigned long duration_ms = (abs(calibratedMeters) / metersPerSecond) * 1000;
-
+  
 
 
   mpu6050.update();
   float targetAngle = mpu6050.getAngleZ(); 
-  unsigned long startTime = millis();
+  
 
   digitalWrite(dirLeft, dirLeftVal); 
   digitalWrite(dirRight, dirRightVal); 
 
+  unsigned long startTime = millis();
 
   //keeps robot straight
-  while (millis() - startTime < duration_ms) {
+  while (millis() - startTime <= duration_ms) {
+    Serial.println(millis()- startTime);
     mpu6050.update();
     float currentAngle = mpu6050.getAngleZ();
     float error = targetAngle - currentAngle;
@@ -125,6 +144,8 @@ void driveDistance(float meters, int speed) {
 
     analogWrite(pwmLeft,  constrain(speed + adjustment, 0, 255));
     analogWrite(pwmRight, constrain(speed - adjustment + RIGHT_BIAS, 0, 255));
+   
+    //analogWrite(pwmRight, constrain(speed - adjustment + RIGHT_BIAS, 0, 255));
   }
 
   // active brake to minimize slippage
@@ -167,6 +188,7 @@ void turnDegrees(float degreesToTurn) {
 
   //adjusts the speed based off the point in the turn
     int speed;
+    
     if (millis() - startTime < 150) speed = START_PUNCH;
     else if (absError < TRANSITION_DEG) speed = FINISH_CREEP;
     else speed = 110;
