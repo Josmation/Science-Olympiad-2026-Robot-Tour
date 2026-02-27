@@ -13,13 +13,13 @@ const int brakeRight = 8;
 
 const int buttonPin = 0; // A0
 
-// Encoder pins
+// Encoder pins, yellow wire = a, green wire = b 
 const int ENC_LEFT_A  = 2;
 const int ENC_LEFT_B  = 4;
 const int ENC_RIGHT_A = 7;
 const int ENC_RIGHT_B = 5;
 
-// Drive constants
+//motor and wheel consts
 const float COUNTS_PER_REV   = 825.0;
 const float WHEEL_DIAM_MM    = 65.0;
 const float WHEEL_CIRCUM_M   = (WHEEL_DIAM_MM * 3.14159265) / 1000.0;
@@ -27,10 +27,8 @@ const float METERS_PER_COUNT = WHEEL_CIRCUM_M / COUNTS_PER_REV;
 
 const float SENSOR_SCALE = 1.33;
 
-// Distance calibration
-// If the robot stops SHORT of 1m, increase this above 1.0.
-// If the robot OVERSHOOTS 1m, decrease this below 1.0.
-const float DISTANCE_CALIBRATION = 0.667;
+// SIX SEVENNNNNN!!!!!!
+const float DISTANCE_CALIBRATION = .609;
 
 // Steering tuning
 const float KP         = 9.0;
@@ -43,30 +41,38 @@ const int  MIN_SPEED        = 60;
 
 MPU6050 mpu6050(Wire);
 
-// =============================================================
 void setup() {
+  //serial for printing to console
   Serial.begin(115200);
   Wire.begin();
+  
   Wire.setClock(400000);
   mpu6050.begin();
 
-  // DLPF + gyro range config
+  // makes the imu better for the code, unrestricts the momentum and makes it filter out noise
   Wire.beginTransmission(0x68); Wire.write(0x1A); Wire.write(0x05); Wire.endTransmission();
   Wire.beginTransmission(0x68); Wire.write(0x1B); Wire.write(0x08); Wire.endTransmission();
 
+
+  //sets the pinmodes (in or out) for all of the pins
   pinMode(dirRight,   OUTPUT); pinMode(pwmRight,   OUTPUT);
+  
   pinMode(dirLeft,    OUTPUT); pinMode(pwmLeft,    OUTPUT);
   pinMode(brakeLeft,  OUTPUT); pinMode(brakeRight, OUTPUT);
+  
   pinMode(buttonPin, INPUT_PULLUP);
 
   // Brakes OFF on startup
   digitalWrite(brakeLeft,  LOW);
+  
   digitalWrite(brakeRight, LOW);
 
   // Encoder pins - plain inputs, no interrupts
   pinMode(ENC_LEFT_A,  INPUT_PULLUP);
+  
   pinMode(ENC_LEFT_B,  INPUT_PULLUP);
   pinMode(ENC_RIGHT_A, INPUT_PULLUP);
+  
   pinMode(ENC_RIGHT_B, INPUT_PULLUP);
 }
 
@@ -74,49 +80,100 @@ void setup() {
 void loop() {
   mpu6050.update();
 
+
+  
+//button push that starts the whole path
   if (digitalRead(buttonPin) == LOW) {
     delay(1000);
     mpu6050.calcGyroOffsets(true);
 
-    driveDistance(1, 200);
+    //driveDistance(.25, 150);
+    
+    //driveDistance(1.112, 120);(1METER)
+    //1m
+            
+    //driveDistance(1.1557, 120); 1METER adj for turn
+
+   
+
+    //driveDistance(.54, 120);half meter
+
+    //driveDistance(.586, 120); half meter adj for turn
+
+    driveDistance(.586, 120);
+    
     delay(500);
 
-    turnDegrees(92);
+    turnDegrees(76);
+
     delay(500);
+
+   
+    
+    //90degrees
+    //turnDegrees(76);
+
+    
+    //delay(500);
+
+    //driveDistance(1.112, 120);
+
+    
   }
 }
 
-// =============================================================
+
+//trying to move half then turn 90 moves it away from 90
+//so I am making a function that when called, moves the robot to adjust for how much the 90 will deviate it from the original coords
+//example, driveDistance(1, 200); turnDegrees(92); doesn't actuall moves it 1m then turn 90 in the exact location
+//adjusted examples, driveDistance(1,200) adjustForTurn();, turnDegrees(92);
+
+//find the turn distance deviation first
+void adjustForTurn(){
+
+
+ driveDistance(-.02, 200);
+
+  
+}
+// function to stop motors so we get a clean motor call next time
 void stopMotors() {
+
+  
   analogWrite(pwmLeft,  0);
   analogWrite(pwmRight, 0);
   // Ensure brakes are off so motors can spin freely next call
   digitalWrite(brakeLeft,  LOW);
   digitalWrite(brakeRight, LOW);
+
+  
 }
 
-// =============================================================
+// creats the different speeds for each interval (LOW,HIGH,LOW)
 int rampedSpeed(long avgCounts, long targetCounts, int topSpeed) {
   if (avgCounts < RAMP_UP_COUNTS) {
     float t = (float)avgCounts / RAMP_UP_COUNTS;
+    
     return (int)(MIN_SPEED + t * (topSpeed - MIN_SPEED));
   }
   long countsRemaining = targetCounts - avgCounts;
   if (countsRemaining < RAMP_DOWN_COUNTS) {
+
+    
     float t = (float)countsRemaining / RAMP_DOWN_COUNTS;
     return (int)(MIN_SPEED + t * (topSpeed - MIN_SPEED));
   }
   return topSpeed;
 }
 
-// =============================================================
-//  driveDistance - encoder-based, gyro-corrected, with ramping
-// =============================================================
+//drive distance function that makes the robot g X distance, had to switch from time based to tick based with encoders
+//also auto corrects path to be straight
 void driveDistance(float meters, int speed) {
   bool isForward = (meters > 0);
 
   int dirLeftVal  = isForward ? LOW  : HIGH;
   int dirRightVal = isForward ? HIGH : LOW;
+  
   int steerMult   = isForward ? 1    : -1;
 
   long targetCounts = (long)(abs(meters) * DISTANCE_CALIBRATION / METERS_PER_COUNT);
@@ -133,6 +190,7 @@ void driveDistance(float meters, int speed) {
   digitalWrite(brakeLeft,  LOW);
   digitalWrite(brakeRight, LOW);
   digitalWrite(dirLeft,    dirLeftVal);
+  
   digitalWrite(dirRight,   dirRightVal);
 
   analogWrite(pwmLeft,  MIN_SPEED);
@@ -143,6 +201,7 @@ void driveDistance(float meters, int speed) {
   unsigned long lastPrintTime = millis();
 
   const unsigned long TIMEOUT_MS = 15000;
+  
   const unsigned long GYRO_MS    = 20;
   const unsigned long PRINT_MS   = 200;
 
@@ -188,6 +247,7 @@ void driveDistance(float meters, int speed) {
     if (millis() - lastPrintTime >= PRINT_MS) {
       lastPrintTime = millis();
       Serial.print("L: "); Serial.print(leftCount);
+      
       Serial.print("  R: "); Serial.print(rightCount);
       Serial.print("  avg: "); Serial.print(avgCounts);
       Serial.print(" / "); Serial.println(targetCounts);
@@ -201,16 +261,16 @@ void driveDistance(float meters, int speed) {
   stopMotors(); // also releases brakes
 }
 
-// =============================================================
-//  turnDegrees
-// =============================================================
+//function that turns X degreees. Ill probably only use 90 degrees (also 90 to get 90 degrees I have to input 92.5, most likely due to friction and stopping threshold)
 void turnDegrees(float degreesToTurn) {
   const float STOP_EARLY_THRESHOLD = 1.2;
   const int   START_PUNCH          = 145;
   const int   FINISH_CREEP         = 80;
+  
   const float TRANSITION_DEG       = 25.0;
 
   stopMotors();
+  
   digitalWrite(brakeLeft,  LOW);
   digitalWrite(brakeRight, LOW);
 
@@ -226,6 +286,8 @@ void turnDegrees(float degreesToTurn) {
 
   unsigned long startTime = millis();
 
+
+  
   while (true) {
     mpu6050.update();
     float currentPhysical = (mpu6050.getAngleZ() - startAngle) * SENSOR_SCALE;
@@ -239,12 +301,13 @@ void turnDegrees(float degreesToTurn) {
     else                                 spd = 110;
 
     analogWrite(pwmLeft,  spd);
+    
     analogWrite(pwmRight, spd);
   }
 
-  // Active brake using shield brake pins
+  // Active brake
   digitalWrite(brakeLeft,  HIGH);
   digitalWrite(brakeRight, HIGH);
   delay(75);
-  stopMotors(); // also releases brakes
+  stopMotors(); // releases brakes
 }
